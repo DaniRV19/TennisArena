@@ -50,4 +50,4 @@ Route::get('/tournaments/{id}', [TournamentController::class, 'show'])->name('to
 Route::post('/tournaments/{id}/join', [TournamentController::class, 'join'])->name('tournaments.join');
 Route::delete('/tournaments/{id}/leave', [TournamentController::class, 'leave'])->name('tournaments.leave');
 
-Route::post('/tournaments/{id}/external-participants', [TournamentController::class, 'addExternalParticipant'])->name('tournaments.addExternalParticipant');
+Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');

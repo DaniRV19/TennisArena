@@ -63,26 +63,53 @@
 
 
 
-        <!-- Tarjetas rápidas -->
+        <!-- Tarjetas rápidas mejoradas -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                <h2 class="text-2xl font-semibold text-gray-800">📋</h2>
-                <p class="text-xl mt-2 font-bold text-gray-700">{{ $tournamentCount ?? 0 }}</p>
-                <p class="text-gray-600">Torneos Registrados</p>
+            <!-- Torneos Registrados -->
+            <div class="bg-gradient-to-r from-lime-300 to-green-400 p-6 rounded-2xl shadow-lg text-white transform hover:scale-105 transition duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-3xl font-bold">{{ $tournamentCount ?? 0 }}</h2>
+                        <p class="text-sm mt-1">Torneos Registrados</p>
+                    </div>
+                    <div class="text-4xl">📋</div>
+                </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                <h2 class="text-2xl font-semibold text-gray-800">🎯</h2>
-                <p class="text-xl mt-2 font-bold text-gray-700">{{ $wins ?? 0 }}</p>
-                <p class="text-gray-600">Torneos Ganados</p>
+            <!-- Torneos Ganados -->
+            <div class="bg-gradient-to-r from-yellow-300 to-orange-400 p-6 rounded-2xl shadow-lg text-white transform hover:scale-105 transition duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-3xl font-bold">{{ $wins ?? 0 }}</h2>
+                        <p class="text-sm mt-1">Torneos Ganados</p>
+                    </div>
+                    <div class="text-4xl">🎯</div>
+                </div>
             </div>
 
-            <div class="bg-white p-6 rounded-lg shadow-md text-center">
-                <h2 class="text-2xl font-semibold text-gray-800">📅</h2>
-                <p class="text-xl mt-2 font-bold text-gray-700">{{ $nextTournamentDate ?? 'Sin próximos eventos' }}</p>
-                <p class="text-gray-600">Próximo Torneo</p>
+            <!-- Próximo Torneo -->
+            <div class="bg-gradient-to-r from-sky-400 to-blue-600 p-6 rounded-2xl shadow-lg text-white transform hover:scale-105 transition duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-lg font-semibold">{{ $nextTournamentDate ?? 'Sin próximos eventos' }}</h2>
+                        <p class="text-sm mt-1">Próximo Torneo</p>
+                    </div>
+                    <div class="text-4xl">📅</div>
+                </div>
+            </div>
+
+            <!-- (Opcional) Puntos Totales -->
+            <div class="bg-gradient-to-r from-purple-400 to-indigo-600 p-6 rounded-2xl shadow-lg text-white transform hover:scale-105 transition duration-300">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-3xl font-bold">{{ $totalPoints ?? 0 }}</h2>
+                        <p class="text-sm mt-1">Puntos Totales</p>
+                    </div>
+                    <div class="text-4xl">🏆</div>
+                </div>
             </div>
         </div>
+
 
         <h2 class="text-xl font-semibold mb-4">Torneos disponibles</h2>
 

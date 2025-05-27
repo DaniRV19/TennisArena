@@ -9,9 +9,11 @@
                 <a href="{{ route('profile') }}" class="hover:text-[#8BC34A]">Perfil</a>
             </li>
             <li>
-                <form method="GET">
+                <form method="POST" action="{{ route('logout') }}">
                     @csrf
-                    <a href=""  type="submit" class="hover:text-[#8BC34A]">Cerrar sesión</a>
+                    <button type="submit" class="hover:text-[#8BC34A] bg-transparent border-none p-0 m-0 cursor-pointer">
+                        Cerrar sesión
+                    </button>
                 </form>
             </li>
         </ul>
