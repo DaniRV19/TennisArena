@@ -12,7 +12,7 @@
         <div class="bg-white p-6 rounded-lg shadow flex items-center space-x-6">
             <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-avatar.png') }}" class="w-20 h-20 rounded-full object-cover">
             <div>
-                <h1 class="text-3xl font-bold text-gray-800">¡Bienvenido, {{ Auth::user()->name }}!</h1>
+                <h1 class="text-3xl font-bold text-gray-800">¡Bienvenid@, {{ Auth::user()->name }}!</h1>
                 <p class="text-gray-600">Bienvenid@ a TennisArena. Aquí tienes un resumen de tu actividad.</p>
             </div>
         </div>
@@ -63,73 +63,88 @@
 
 
 
-        <!-- Tarjetas rápidas mejoradas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <!-- Torneos Registrados -->
-            <div class="bg-gradient-to-r from-lime-300 to-green-400 p-6 rounded-2xl shadow-lg text-white transform hover:scale-105 transition duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-3xl font-bold">{{ $tournamentCount ?? 0 }}</h2>
-                        <p class="text-sm mt-1">Torneos Registrados</p>
-                    </div>
-                    <div class="text-4xl">📋</div>
-                </div>
+        <!-- Panel visual de rendimiento -->
+        <div class="bg-white p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Porcentaje de victorias -->
+            <div class="text-center">
+                <h2 class="text-lg font-bold text-gray-700 mb-2">🎾 Ratio de victorias</h2>
+                <canvas id="winRatioChart" class="mx-auto w-40 h-40"></canvas>
+                <p class="text-gray-500 mt-2">{{ $wins ?? 0 }} victorias / {{ $matchesPlayed ?? 0 }} partidos</p>
             </div>
 
-            <!-- Torneos Ganados -->
-            <div class="bg-gradient-to-r from-yellow-300 to-orange-400 p-6 rounded-2xl shadow-lg text-white transform hover:scale-105 transition duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-3xl font-bold">{{ $wins ?? 0 }}</h2>
-                        <p class="text-sm mt-1">Torneos Ganados</p>
-                    </div>
-                    <div class="text-4xl">🎯</div>
+            <!-- Progreso al siguiente nivel -->
+            <div class="text-center">
+                <h2 class="text-lg font-bold text-gray-700 mb-2">🔥 Progreso al siguiente ranking</h2>
+                <div class="relative h-6 bg-gray-200 rounded-full overflow-hidden">
+                    <div class="bg-lime-500 h-full transition-all duration-500" style="width: {{ $rankingProgress ?? 0 }}%;"></div>
                 </div>
+                <p class="text-gray-500 mt-2">{{ $currentPoints ?? 0 }} / 1000 pts</p>
             </div>
 
-            <!-- Próximo Torneo -->
-            <div class="bg-gradient-to-r from-sky-400 to-blue-600 p-6 rounded-2xl shadow-lg text-white transform hover:scale-105 transition duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-lg font-semibold">{{ $nextTournamentDate ?? 'Sin próximos eventos' }}</h2>
-                        <p class="text-sm mt-1">Próximo Torneo</p>
-                    </div>
-                    <div class="text-4xl">📅</div>
-                </div>
+            <!-- Torneos jugados este mes -->
+            <div class="text-center">
+                <h2 class="text-lg font-bold text-gray-700 mb-2">📅 Torneos este mes</h2>
+                <p class="text-5xl font-bold text-lime-600">{{ $monthlyTournaments ?? 0 }}</p>
+                <p class="text-gray-500 mt-2">Participaciones en mayo</p>
             </div>
 
-            <!-- (Opcional) Puntos Totales -->
-            <div class="bg-gradient-to-r from-purple-400 to-indigo-600 p-6 rounded-2xl shadow-lg text-white transform hover:scale-105 transition duration-300">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <h2 class="text-3xl font-bold">{{ $totalPoints ?? 0 }}</h2>
-                        <p class="text-sm mt-1">Puntos Totales</p>
-                    </div>
-                    <div class="text-4xl">🏆</div>
-                </div>
+            <!-- Eficiencia del jugador -->
+            <div class="text-center">
+                <h2 class="text-lg font-bold text-gray-700 mb-2">⚡ Eficiencia</h2>
+                <p class="text-3xl font-semibold text-blue-600">
+                    {{ number_format(($wins ?? 0) / max($matchesPlayed ?? 1, 1) * 100, 1) }}%
+                </p>
+                <p class="text-gray-500 mt-2">Victorias por partido</p>
             </div>
         </div>
 
 
         <h2 class="text-xl font-semibold mb-4">Torneos disponibles</h2>
 
-<ul class="space-y-2">
+    <ul class="space-y-6">
     @forelse($tournaments as $tournament)
-        <li class="border p-4 rounded shadow-sm hover:shadow-md transition">
-            <h3 class="text-lg font-bold">{{ $tournament->name }}</h3>
-            <p><strong>Fecha:</strong> {{ $tournament->date }}</p>
-            <p><strong>Ubicación:</strong> {{ $tournament->location }}</p>
-            <a href="{{ route('tournaments.show', $tournament->id) }}" class="mt-2 inline-block text-green-600 hover:underline">
-                Ver detalles
-            </a>
+        <li class="bg-white border border-gray-200 p-6 rounded-lg shadow-sm hover:shadow-md transition-all duration-200" x-data="{ open: false }">
+            <h3 class="text-2xl font-semibold text-gray-800 mb-2">{{ $tournament->name }}</h3>
+            <p class="text-gray-600"><strong>📅 Fecha:</strong> {{ $tournament->date }}</p>
+            <p class="text-gray-600"><strong>📍 Ubicación:</strong> {{ $tournament->location }}</p>
+
+            <div class="mt-6 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                <a href="{{ route('tournaments.show', $tournament->id) }}" class="px-4 py-2 bg-[#8BC34A] text-white rounded hover:bg-[#7AB330] transition text-center">
+                    Ver detalles
+                </a>
+
+                <button @click="open = true" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-center">
+                    Eliminar torneo
+                </button>
+            </div>
+
+            <!-- Modal -->
+            <div x-show="open" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50" x-cloak>
+                <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-md text-center">
+                    <h2 class="text-xl font-semibold mb-4">¿Eliminar este torneo?</h2>
+                    <p class="mb-6 text-gray-700">Esta acción no se puede deshacer.</p>
+
+                    <div class="flex justify-center gap-4">
+                        <button @click="open = false" class="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400 transition">
+                            Cancelar
+                        </button>
+
+                        <form action="{{ route('tournaments.destroy', $tournament->id) }}" method="POST">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition">
+                                Confirmar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
         </li>
     @empty
-        <p>No hay torneos disponibles aún.</p>
+        <p class="text-gray-600">No hay torneos disponibles aún.</p>
     @endforelse
 </ul>
-
-
-        
+ 
     </div>
 </div>
 @endsection

@@ -60,22 +60,12 @@ class TournamentController extends Controller
         return redirect()->route('tournaments.show', $id)->with('success', 'Has cancelado tu inscripción.');
     }
 
-    public function addExternalParticipant(Request $request, $id)
-{
-    $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'nullable|email|max:255',
-    ]);
+    public function destroy(Tournament $tournament)
+    {
+        $tournament->delete();
 
-    $tournament = Tournament::findOrFail($id);
+        return redirect()->back()->with('success', 'Torneo eliminado correctamente.');
+    }
 
-    $tournament->externalParticipants()->create([
-        'name' => $request->name,
-        'email' => $request->email,
-    ]);
-
-    return redirect()->route('tournaments.show', $tournament->id)
-        ->with('success', 'Participante externo añadido correctamente.');
-}
 
 }

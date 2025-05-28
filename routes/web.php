@@ -51,3 +51,5 @@ Route::post('/tournaments/{id}/join', [TournamentController::class, 'join'])->na
 Route::delete('/tournaments/{id}/leave', [TournamentController::class, 'leave'])->name('tournaments.leave');
 
 Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
+
+Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
