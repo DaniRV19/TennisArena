@@ -3,10 +3,7 @@
 @include('components.header')
 
 @section('content')
-<section 
-    class="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
-    style="background-image: url('https://img.freepik.com/premium-photo/tennis-court-with-sunset-background_657790-42287.jpg');"
->
+<section class="min-h-screen bg-cover bg-center flex items-center justify-center px-4 login-bg" style="background-image: url('{{ asset('images/tennis-court.jpg') }}');">
     <div class="max-w-md w-full text-center text-white">
         <h2 class="text-4xl font-extrabold mb-4 drop-shadow-md">Inicia sesión en TennisArena</h2>
         <p class="text-lg mb-8 drop-shadow-md">Accede a tu cuenta y comienza a gestionar tus torneos de tenis.</p>

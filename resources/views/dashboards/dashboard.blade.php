@@ -63,40 +63,42 @@
 
 
 
-        <!-- Panel visual de rendimiento -->
-        <div class="bg-white p-6 rounded-xl shadow-md grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Porcentaje de victorias -->
-            <div class="text-center">
-                <h2 class="text-lg font-bold text-gray-700 mb-2">🎾 Ratio de victorias</h2>
-                <canvas id="winRatioChart" class="mx-auto w-40 h-40"></canvas>
-                <p class="text-gray-500 mt-2">{{ $wins ?? 0 }} victorias / {{ $matchesPlayed ?? 0 }} partidos</p>
+        <!-- Panel visual de rendimiento separado en cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+            <!-- Ratio de victorias - Tierra batida -->
+            <div class="rounded-xl shadow-md p-6 text-center text-white bg-gradient-to-tr from-orange-400 to-yellow-600 transform transition-transform hover:scale-105 hover:shadow-xl">
+                <h2 class="text-lg font-bold mb-2">🎾 Ratio de victorias</h2>
+                <canvas id="winRatioChart" class="mx-auto w-40 h-40 bg-white rounded-full"></canvas>
+                <p class="mt-2">{{ $wins ?? 0 }} victorias / {{ $matchesPlayed ?? 0 }} partidos</p>
             </div>
 
-            <!-- Progreso al siguiente nivel -->
-            <div class="text-center">
-                <h2 class="text-lg font-bold text-gray-700 mb-2">🔥 Progreso al siguiente ranking</h2>
+            <!-- Progreso al siguiente ranking - Pista dura -->
+            <div class="rounded-xl shadow-md p-6 text-center text-white bg-gradient-to-tr from-blue-500 to-indigo-700 transform transition-transform hover:scale-105 hover:shadow-xl">
+                <h2 class="text-lg font-bold mb-2">🔥 Progreso al siguiente ranking</h2>
                 <div class="relative h-6 bg-gray-200 rounded-full overflow-hidden">
-                    <div class="bg-lime-500 h-full transition-all duration-500" style="width: {{ $rankingProgress ?? 0 }}%;"></div>
+                    <div class="bg-lime-400 h-full transition-all duration-500" style="width: {{ $rankingProgress ?? 0 }}%;"></div>
                 </div>
-                <p class="text-gray-500 mt-2">{{ $currentPoints ?? 0 }} / 1000 pts</p>
+                <p class="mt-2">{{ $currentPoints ?? 0 }} / 1000 pts</p>
             </div>
 
-            <!-- Torneos jugados este mes -->
-            <div class="text-center">
-                <h2 class="text-lg font-bold text-gray-700 mb-2">📅 Torneos este mes</h2>
-                <p class="text-5xl font-bold text-lime-600">{{ $monthlyTournaments ?? 0 }}</p>
-                <p class="text-gray-500 mt-2">Participaciones en mayo</p>
+            <!-- Torneos jugados este mes - Césped -->
+            <div class="rounded-xl shadow-md p-6 text-center text-white bg-gradient-to-tr from-green-500 to-lime-600 transform transition-transform hover:scale-105 hover:shadow-xl">
+                <h2 class="text-lg font-bold mb-2">📅 Torneos este mes</h2>
+                <p class="text-5xl font-bold">{{ $monthlyTournaments ?? 0 }}</p>
             </div>
 
-            <!-- Eficiencia del jugador -->
-            <div class="text-center">
-                <h2 class="text-lg font-bold text-gray-700 mb-2">⚡ Eficiencia</h2>
-                <p class="text-3xl font-semibold text-blue-600">
+            <!-- Eficiencia del jugador - Carpeta o sintética -->
+            <div class="rounded-xl shadow-md p-6 text-center text-white bg-gradient-to-tr from-gray-700 to-gray-900 transform transition-transform hover:scale-105 hover:shadow-xl">
+                <h2 class="text-lg font-bold mb-2">⚡ Eficiencia</h2>
+                <p class="text-3xl font-semibold">
                     {{ number_format(($wins ?? 0) / max($matchesPlayed ?? 1, 1) * 100, 1) }}%
                 </p>
-                <p class="text-gray-500 mt-2">Victorias por partido</p>
+                <p class="mt-2">Victorias por partido</p>
             </div>
+
         </div>
+
 
 
         <h2 class="text-xl font-semibold mb-4">Torneos disponibles</h2>
