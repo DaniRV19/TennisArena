@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\CustomLoginController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\RegistrationController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\GameController;
 
 
 Route::get('/', function () {
@@ -58,3 +59,5 @@ Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destro
 
 
 Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+
+Route::post('/games', [GameController::class, 'store'])->name('games.store');

@@ -49,6 +49,76 @@
         @endif
 
         
+        <div x-data="tournamentGames()" class="mt-10">
+    <h2 class="text-xl font-semibold mb-4">Crear Partidos</h2>
+
+    <template x-if="games.length === 0">
+        <button @click="generateGames()" class="bg-blue-600 text-white px-4 py-2 rounded">Generar Partidos</button>
+    </template>
+
+    <template x-if="games.length > 0">
+        <div class="space-y-4">
+            <template x-for="(game, index) in games" :key="index">
+                <div class="p-4 border rounded bg-gray-50">
+                    <p class="mb-2 font-medium" x-text="`${game.player1} vs ${game.player2}`"></p>
+                    
+                    <div class="flex space-x-4 mb-2">
+                        <input type="number" class="border px-2 py-1 rounded w-20" x-model.number="game.score1" placeholder="P1">
+                        <input type="number" class="border px-2 py-1 rounded w-20" x-model.number="game.score2" placeholder="P2">
+                    </div>
+
+                    <button @click="saveLocal(index)" 
+                        x-text="game.saved ? 'Resultado guardado' : 'Guardar resultado'" 
+                        :class="game.saved ? 'bg-green-500' : 'bg-gray-700'"
+                        class="text-white px-3 py-1 rounded">
+                    </button>
+                </div>
+            </template>
+        </div>
+    </template>
+</div>
+
+
+
     </div>
 </div>
+
+
+<script>
+    function tournamentGames() {
+        return {
+            players: @json($tournament->users->pluck('full_name')->toArray()),
+            games: [],
+
+            generateGames() {
+                const shuffled = [...this.players].sort(() => Math.random() - 0.5);
+                this.games = [];
+
+                for (let i = 0; i < shuffled.length - 1; i += 2) {
+                    this.games.push({
+                        player1: shuffled[i],
+                        player2: shuffled[i + 1],
+                        score1: null,
+                        score2: null,
+                        saved: false
+                    });
+                }
+
+                if (shuffled.length % 2 !== 0) {
+                    alert(`Jugador sin pareja: ${shuffled[shuffled.length - 1]}`);
+                }
+            },
+
+            saveLocal(index) {
+                const game = this.games[index];
+                if (game.score1 === null || game.score2 === null) {
+                    alert('Por favor, introduce ambos resultados.');
+                    return;
+                }
+                game.saved = true;
+            }
+        }
+    }
+</script>
+
 @endsection
