@@ -13,7 +13,7 @@
             <!-- Bienvenida -->
             <div class="bg-white p-6 rounded-lg shadow flex items-center space-x-6">
                 <div class="relative group cursor-pointer" @click="open = true">
-                    <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-avatar.png') }}"
+                    <img id="profile-img" src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-avatar.png') }}"
                         class="w-20 h-20 rounded-full object-cover transition duration-300 group-hover:brightness-50">
                     <div class="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
                         <svg class="w-6 h-6 text-white mb-1" fill="none" stroke="currentColor" stroke-width="2"
@@ -38,11 +38,6 @@
                         @csrf
                         @method('PUT')
 
-                        <!-- Foto -->
-                        <div>
-                            <label class="block text-gray-700">Foto de Perfil</label>
-                            <input type="file" name="profile_picture" class="mt-1 block w-full text-sm text-gray-700">
-                        </div>
 
                         <!-- Nombre -->
                         <div>
@@ -206,6 +201,7 @@
 <script>
     function profileEditor() {
         return {
+            open: false,
             form: {
                 name: '{{ Auth::user()->name }}',
                 email: '{{ Auth::user()->email }}',
@@ -217,9 +213,8 @@
                 formData.append('_method', 'PUT');
                 formData.append('_token', '{{ csrf_token() }}');
 
-                const fileInput = this.$refs.profile_picture;
-                if (fileInput.files.length > 0) {
-                    formData.append('profile_picture', fileInput.files[0]);
+                if (updatedUser.profile_picture) {
+                    document.querySelector('#profile-img').src = updatedUser.profile_picture;
                 }
 
                 try {
@@ -229,9 +224,16 @@
                     });
 
                     if (response.ok) {
-                        // Cierra el modal y refresca los datos
-                        this.$root.open = false;
-                        location.reload();
+                        const updatedUser = await response.json();
+
+                        // Actualiza los datos visualmente sin recargar
+                        document.querySelector('#profile-name').textContent = '¡Bienvenid@, ' + updatedUser.name + '!';
+                        document.querySelector('#profile-email').textContent = updatedUser.email;
+                        if (updatedUser.profile_picture) {
+                            document.querySelector('#profile-img').src = '/storage/' + updatedUser.profile_picture;
+                        }
+
+                        this.open = false;
                     } else {
                         const error = await response.json();
                         alert('Error al actualizar el perfil: ' + (error.message || ''));

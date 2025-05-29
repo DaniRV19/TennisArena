@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
@@ -47,25 +48,35 @@ class ProfileController extends Controller
     }
 
     public function update(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:users,email,' . $user->id,
-            'profile_picture' => 'nullable|image|max:2048',
-        ]);
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|max:255',
+        'profile_picture' => 'nullable|image|max:2048',
+    ]);
 
-        if ($request->hasFile('profile_picture')) {
-            $path = $request->file('profile_picture')->store('profile_pictures', 'public');
-            $user->profile_picture = $path;
+    if ($request->hasFile('profile_picture')) {
+        // Eliminar imagen anterior si existe
+        if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
+            Storage::disk('public')->delete($user->profile_picture);
         }
 
-        $user->name = $request->name;
-        $user->email = $request->email;
-        $user->save();
-
-        return redirect()->back()->with('success', 'Perfil actualizado correctamente.');
+        // Guardar nueva imagen en carpeta 'profiles'
+        $path = $request->file('profile_picture')->store('profiles', 'public');
+        $user->profile_picture = $path;
     }
+
+    $user->name = $request->name;
+    $user->email = $request->email;
+    $user->save();
+
+    return response()->json([
+        'name' => $user->name,
+        'email' => $user->email,
+        'profile_picture' => $user->profile_picture ? asset('storage/' . $user->profile_picture) : null,
+    ]);
+}
 
 }
