@@ -8,6 +8,8 @@ use App\Http\Controllers\Auth\CustomRegisterController;
 use App\Http\Controllers\Auth\CustomLoginController;
 use App\Http\Controllers\TournamentController;
 use App\Http\Controllers\RegistrationController;
+use App\Http\Controllers\ProfileController;
+
 
 Route::get('/', function () {
     return view('landing');
@@ -53,3 +55,6 @@ Route::delete('/tournaments/{id}/leave', [TournamentController::class, 'leave'])
 Route::post('/logout', [\App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])->name('logout');
 
 Route::delete('/tournaments/{tournament}', [TournamentController::class, 'destroy'])->name('tournaments.destroy');
+
+
+Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');

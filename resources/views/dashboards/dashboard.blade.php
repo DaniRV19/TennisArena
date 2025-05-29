@@ -8,12 +8,65 @@
 <div class="bg-gray-100 min-h-screen p-8">
     <div class="max-w-7xl mx-auto space-y-8">
 
-        <!-- Bienvenida -->
-        <div class="bg-white p-6 rounded-lg shadow flex items-center space-x-6">
-            <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-avatar.png') }}" class="w-20 h-20 rounded-full object-cover">
-            <div>
-                <h1 class="text-3xl font-bold text-gray-800">¡Bienvenid@, {{ Auth::user()->name }}!</h1>
-                <p class="text-gray-600">Bienvenid@ a TennisArena. Aquí tienes un resumen de tu actividad.</p>
+        <!-- Alpine Modal + Estilos -->
+        <div x-data="{ open: false }">
+            <!-- Bienvenida -->
+            <div class="bg-white p-6 rounded-lg shadow flex items-center space-x-6">
+                <div class="relative group cursor-pointer" @click="open = true">
+                    <img src="{{ Auth::user()->profile_picture ? asset('storage/' . Auth::user()->profile_picture) : asset('images/default-avatar.png') }}"
+                        class="w-20 h-20 rounded-full object-cover transition duration-300 group-hover:brightness-50">
+                    <div class="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                        <svg class="w-6 h-6 text-white mb-1" fill="none" stroke="currentColor" stroke-width="2"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M15.232 5.232l3.536 3.536M9 13l6-6 3 3-6 6H9v-3z"/>
+                        </svg>
+                        <span class="text-white text-sm">Editar</span>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">¡Bienvenid@, {{ Auth::user()->name }}!</h1>
+                    <p class="text-gray-600">Bienvenid@ a TennisArena. Aquí tienes un resumen de tu actividad.</p>
+                </div>
+            </div>
+
+            <!-- Modal -->
+            <div x-show="open" x-transition class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                <div @click.away="open = false" class="bg-white p-6 rounded-lg w-full max-w-md space-y-4 shadow-lg">
+                    <h2 class="text-xl font-bold text-gray-800 mb-4">Editar Perfil</h2>
+                    <form action="{{ route('profile.update') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        @csrf
+                        @method('PUT')
+
+                        <!-- Foto -->
+                        <div>
+                            <label class="block text-gray-700">Foto de Perfil</label>
+                            <input type="file" name="profile_picture" class="mt-1 block w-full text-sm text-gray-700">
+                        </div>
+
+                        <!-- Nombre -->
+                        <div>
+                            <label class="block text-gray-700">Nombre</label>
+                            <input type="text" name="name" value="{{ Auth::user()->name }}" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        </div>
+
+                        <!-- Correo -->
+                        <div>
+                            <label class="block text-gray-700">Correo Electrónico</label>
+                            <input type="email" name="email" value="{{ Auth::user()->email }}" required
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm">
+                        </div>
+
+                        <!-- Botones -->
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" @click="open = false"
+                                    class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400">Cancelar</button>
+                            <button type="submit"
+                                    class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">Guardar</button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
 
@@ -84,7 +137,7 @@
 
             <!-- Torneos jugados este mes - Césped -->
             <div class="rounded-xl shadow-md p-6 text-center text-white bg-gradient-to-tr from-green-500 to-lime-600 transform transition-transform hover:scale-105 hover:shadow-xl">
-                <h2 class="text-lg font-bold mb-2">📅 Torneos este mes</h2>
+                <h2 class="text-lg font-bold mb-2">📅 Torneos registrados</h2>
                 <p class="text-5xl font-bold">{{ $monthlyTournaments ?? 0 }}</p>
             </div>
 
@@ -149,4 +202,48 @@
  
     </div>
 </div>
+
+<script>
+    function profileEditor() {
+        return {
+            form: {
+                name: '{{ Auth::user()->name }}',
+                email: '{{ Auth::user()->email }}',
+            },
+            async submitForm() {
+                const formData = new FormData();
+                formData.append('name', this.form.name);
+                formData.append('email', this.form.email);
+                formData.append('_method', 'PUT');
+                formData.append('_token', '{{ csrf_token() }}');
+
+                const fileInput = this.$refs.profile_picture;
+                if (fileInput.files.length > 0) {
+                    formData.append('profile_picture', fileInput.files[0]);
+                }
+
+                try {
+                    const response = await fetch('{{ route('profile.update') }}', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    if (response.ok) {
+                        // Cierra el modal y refresca los datos
+                        this.$root.open = false;
+                        location.reload();
+                    } else {
+                        const error = await response.json();
+                        alert('Error al actualizar el perfil: ' + (error.message || ''));
+                    }
+                } catch (error) {
+                    console.error(error);
+                    alert('Error inesperado al enviar el formulario');
+                }
+            }
+        };
+    }
+</script>
+
+
 @endsection

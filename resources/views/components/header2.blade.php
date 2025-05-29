@@ -6,9 +6,6 @@
 
         <ul class="flex gap-6 text-sm text-gray-800">
             <li>
-                <a href="{{ route('profile') }}" class="hover:text-[#8BC34A]">Perfil</a>
-            </li>
-            <li>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit" class="hover:text-[#8BC34A] bg-transparent border-none p-0 m-0 cursor-pointer">
