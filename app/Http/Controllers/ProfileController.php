@@ -54,19 +54,8 @@ class ProfileController extends Controller
     $request->validate([
         'name' => 'required|string|max:255',
         'email' => 'required|email|max:255',
-        'profile_picture' => 'nullable|image|max:2048',
     ]);
 
-    if ($request->hasFile('profile_picture')) {
-        // Eliminar imagen anterior si existe
-        if ($user->profile_picture && Storage::disk('public')->exists($user->profile_picture)) {
-            Storage::disk('public')->delete($user->profile_picture);
-        }
-
-        // Guardar nueva imagen en carpeta 'profiles'
-        $path = $request->file('profile_picture')->store('profiles', 'public');
-        $user->profile_picture = $path;
-    }
 
     $user->name = $request->name;
     $user->email = $request->email;
@@ -75,7 +64,6 @@ class ProfileController extends Controller
     return response()->json([
         'name' => $user->name,
         'email' => $user->email,
-        'profile_picture' => $user->profile_picture ? asset('storage/' . $user->profile_picture) : null,
     ]);
 }
 

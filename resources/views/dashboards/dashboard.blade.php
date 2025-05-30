@@ -213,9 +213,7 @@
                 formData.append('_method', 'PUT');
                 formData.append('_token', '{{ csrf_token() }}');
 
-                if (updatedUser.profile_picture) {
-                    document.querySelector('#profile-img').src = updatedUser.profile_picture;
-                }
+            
 
                 try {
                     const response = await fetch('{{ route('profile.update') }}', {
@@ -229,9 +227,6 @@
                         // Actualiza los datos visualmente sin recargar
                         document.querySelector('#profile-name').textContent = '¡Bienvenid@, ' + updatedUser.name + '!';
                         document.querySelector('#profile-email').textContent = updatedUser.email;
-                        if (updatedUser.profile_picture) {
-                            document.querySelector('#profile-img').src = '/storage/' + updatedUser.profile_picture;
-                        }
 
                         this.open = false;
                     } else {
